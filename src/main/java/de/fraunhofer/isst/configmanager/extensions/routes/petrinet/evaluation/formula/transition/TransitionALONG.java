@@ -31,7 +31,7 @@ public class TransitionALONG implements TransitionFormula {
     public static TransitionALONG transitionALONG(final TransitionFormula parameter) {
         return new TransitionALONG(parameter);
     }
-    
+
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return transitionNOT(transitionEV(transitionNOT(parameter))).evaluate(node, paths);

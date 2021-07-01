@@ -21,11 +21,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * TT operator evaluates to True everytime.
+ * TT operator evaluates to True every time.
  */
 @NoArgsConstructor
 public class TT implements StateFormula, TransitionFormula {
-
     public static TT TT() {
         return new TT();
     }

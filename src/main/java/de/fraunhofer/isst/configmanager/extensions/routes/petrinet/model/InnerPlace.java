@@ -26,7 +26,6 @@ import java.util.Objects;
 @Getter
 @Setter
 public class InnerPlace extends PlaceImpl {
-
     /**
      * Original Transition, which was unfolded to create the InnerPlace.
      */

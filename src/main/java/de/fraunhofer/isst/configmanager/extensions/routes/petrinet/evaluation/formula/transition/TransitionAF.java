@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 /**
- * Evaluates to true, if given {@link ArcExpression} evaluates to true.
+ * Wvaluates to true, if given {@link ArcExpression} evaluates to true.
  */
 @AllArgsConstructor
 public class TransitionAF implements TransitionFormula {

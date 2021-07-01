@@ -101,7 +101,7 @@ public class PetriNetSimulator {
     }
 
     /**
-     * For a given petriNet, find all transitions that can be taken.
+     * For a given petriNet, find all transitions that can be taken
      * @param petriNet a given PetriNet
      * @return List of Transition nodes, for which all previous nodes have markers
      */
@@ -326,7 +326,7 @@ public class PetriNetSimulator {
             unfolded.getArcs().removeAll(targetArcs);
             unfolded.getArcs().removeAll(sourceArcs);
             for (final var arc : targetArcs) {
-                final var newArc = new ArcImpl(arc.getSource(), transpart1);
+                var newArc = new ArcImpl(arc.getSource(), transpart1);
                 unfolded.getArcs().add(newArc);
             }
             for (final var arc : sourceArcs) {
@@ -357,7 +357,7 @@ public class PetriNetSimulator {
     }
 
     /**
-     * Remove subpaths from set of paths, only keep longest paths (but keep them if they have different starting places).
+     * Remove subpaths from set of paths, only keep longest paths (but keep them if they have different starting places)
      *
      * Example: {A -> B -> C (keep), A -> B (remove), B -> C (keep)}
      *

@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Set;
 
 /**
- * PetriNet Interface, implemented by {@link PetriNetImpl}
+ * PetriNet Interface, implemented by {@link PetriNetImpl}.
  *
  * A PetriNet is a directed Graph, consisting of two types of {@link Node}:
  * {@link Place} and {@link Transition}, and Edges: {@link Arc}.

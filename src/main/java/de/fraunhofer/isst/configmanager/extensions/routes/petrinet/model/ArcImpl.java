@@ -100,5 +100,4 @@ public class ArcImpl implements Arc {
 
         return source.equals(arc.source) && target.equals(arc.target);
     }
-
 }

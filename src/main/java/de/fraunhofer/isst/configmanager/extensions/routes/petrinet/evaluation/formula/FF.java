@@ -21,11 +21,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * FF operator evaluates to False everytime.
+ * FF operator evaluates to False every time.
  */
 @NoArgsConstructor
 public class FF implements StateFormula, TransitionFormula {
-
     public static FF FF() {
         return new FF();
     }

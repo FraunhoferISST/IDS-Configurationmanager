@@ -46,5 +46,4 @@ public class NodeFORALL_NEXT implements StateFormula {
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

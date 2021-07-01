@@ -51,5 +51,4 @@ public class TransitionMODAL implements TransitionFormula {
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

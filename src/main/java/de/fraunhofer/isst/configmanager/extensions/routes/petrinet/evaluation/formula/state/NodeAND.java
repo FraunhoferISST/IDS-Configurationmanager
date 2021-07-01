@@ -21,7 +21,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 /**
- * evaluates to true, if parameter1 and parameter2 evaluate to true.
+ * Evaluates to true, if parameter1 and parameter2 evaluate to true.
  */
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

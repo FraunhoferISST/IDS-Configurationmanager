@@ -46,5 +46,4 @@ public class TransitionFORALL_NEXT implements TransitionFormula {
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }
