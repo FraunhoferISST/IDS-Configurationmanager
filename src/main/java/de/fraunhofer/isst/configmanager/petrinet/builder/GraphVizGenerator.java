@@ -17,6 +17,11 @@ import de.fraunhofer.isst.configmanager.petrinet.model.PetriNet;
 import de.fraunhofer.isst.configmanager.petrinet.model.PlaceImpl;
 import de.fraunhofer.isst.configmanager.petrinet.model.TransitionImpl;
 import de.fraunhofer.isst.configmanager.petrinet.simulator.StepGraph;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -36,6 +41,56 @@ public class GraphVizGenerator {
      * @param petriNet The PetriNet for which the Graph representation should be built.
      * @return a DOT String, used for visualizing the PetriNet with GraphViz
      */
+    public static String generateGraphVizWithContext(final PetriNet petriNet) {
+        final var s = new StringBuilder();
+        s.append("digraph graphname {");
+
+        for (final var node : petriNet.getNodes()) {
+            if (node instanceof TransitionImpl) {
+                //transitions will be drawn as boxes
+                s.append(String.format("%d [shape=box, label=\"%s\"];", node.getID().hashCode(), contextInfo((TransitionImpl) node)));
+            } else {
+                //nodes will be drawn as circles and coloured red, if there have markers
+                s.append(String.format("%d[label=\"%s\"", node.getID().hashCode(), node.getID()));
+
+                if (((PlaceImpl) node).getMarkers() > 0) {
+                    s.append(", color=red");
+                }
+                s.append("];");
+                s.append(String.format("%d[label=\"%s\"];", node.getID().hashCode(), node.getID()));
+            }
+        }
+
+        for (final var arc : petriNet.getArcs()) {
+            //a directed edge will be drawn for every arc
+            s.append(String.format("%d -> %d;", arc.getSource().getID().hashCode(), arc.getTarget().getID().hashCode()));
+        }
+
+        s.append("}");
+        return s.toString();
+    }
+
+    /**
+     * Write transitions context to string.
+     *
+     * @param transition a petrinet transition
+     * @return transitions context as string
+     */
+    private static String contextInfo(final TransitionImpl transition) {
+        final var contextObj = transition.getContext();
+        final var read = contextObj.getRead().toString();
+        final var write = contextObj.getWrite().toString();
+        final var erase = contextObj.getErase().toString();
+        final var context = contextObj.getContext().toString();
+        return String.format("name=%s; write=%s; read=%s; erase=%s; context=%s", transition.getID(), write, read, erase, context);
+    }
+
+    /**
+     * Generate a GraphViz Dot String representation for the given {@link PetriNet}.
+     *
+     * @param petriNet The PetriNet for which the Graph representation should be built.
+     * @return a DOT String, used for visualizing the PetriNet with GraphViz
+     */
     public static String generateGraphViz(final PetriNet petriNet) {
         final var s = new StringBuilder();
         s.append("digraph graphname {");
@@ -43,31 +98,32 @@ public class GraphVizGenerator {
         for (final var node : petriNet.getNodes()) {
             if (node instanceof TransitionImpl) {
                 //transitions will be drawn as boxes
-                s.append(node.getID().hashCode() + " [shape=box, label=\"" + node.getID() + "\"];");
+                s.append(String.format("%d [shape=box, label=\"name=%s\"];", node.getID().hashCode(), node.getID()));
             } else {
                 //nodes will be drawn as circles and coloured red, if there have markers
-                s.append(node.getID().hashCode() + "[label=\"" + node.getID() + "\"");
+                s.append(String.format("%d[label=\"%s\"", node.getID().hashCode(), node.getID()));
 
                 if (((PlaceImpl) node).getMarkers() > 0) {
                     s.append(", color=red");
                 }
                 s.append("];");
-                s.append(node.getID().hashCode() + "[label=\"" + node.getID() + "\"];");
+                s.append(String.format("%d[label=\"%s\"];", node.getID().hashCode(), node.getID()));
             }
         }
 
         for (final var arc : petriNet.getArcs()) {
             //a directed edge will be drawn for every arc
-            s.append(arc.getSource().getID().hashCode() + " -> " + arc.getTarget().getID().hashCode() + ";");
+            s.append(String.format("%d -> %d;", arc.getSource().getID().hashCode(), arc.getTarget().getID().hashCode()));
         }
 
         s.append("}");
         return s.toString();
     }
-    
+
     /**
      * Generate a GraphViz Dot String representation for the given {@link StepGraph}
      * The StepGraph for which the Graph representation should be built.
+     * @param stepGraph the graph used
      * @return a DOT String, used for visualizing the StepGraph with GraphViz.
      */
     public static String generateGraphViz(final StepGraph stepGraph) {
@@ -83,16 +139,16 @@ public class GraphVizGenerator {
         s.append("compound=true;");
 
 
-        for (var petriNet : stepGraph.getSteps()) {
+        for (final var petriNet : stepGraph.getSteps()) {
             //generate the graph for every PetriNet in the StepGraph
             var petriString = generateGraphViz(petriNet);
             //the PetriNet Graphs will be subgraphs and have different names
             petriString = petriString.replace("digraph", "subgraph");
-            petriString = petriString.replace("graphname", "cluster"+i);
+            petriString = petriString.replace("graphname", "cluster" + i);
 
             for (final var node : petriNet.getNodes()) {
                 //nodes must have unique names too (or DOT will draw them as the same node)
-                petriString = petriString.replace(String.valueOf(node.getID().hashCode()), node.getID().hashCode()+String.valueOf(i));
+                petriString = petriString.replace(String.valueOf(node.getID().hashCode()), node.getID().hashCode() + String.valueOf(i));
             }
 
             s.append(petriString);
@@ -107,39 +163,25 @@ public class GraphVizGenerator {
 
         for (final var arc : graphArcs) {
             //draw the GraphVizArcs as directed edges between the PetriNet Subgraphs
-            s.append(someId + arc.getSource() + " -> " + someId + arc.getTarget() + "[ltail=cluster"+arc.getSource()+",lhead=cluster"+arc.getTarget()+"];");
+            s.append(String.format("%s%d -> %s%d[ltail=cluster%d,lhead=cluster%d];", someId, arc.getSource(), someId, arc.getTarget(), arc.getSource(), arc.getTarget()));
         }
 
         s.append("}");
         return s.toString();
     }
-    
+
     /**
-     * Utility Subclass, representing Petri Net Arcs
+     * Utility Subclass, representing Petri Net Arcs.
      */
+    @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class GraphvizArc {
-        private int source;
-        private int target;
+        @Getter
+        @Setter
+        int source;
 
-        public GraphvizArc(final int source, final int target) {
-            this.source = source;
-            this.target = target;
-        }
-
-        public int getSource() {
-            return source;
-        }
-
-        public int getTarget() {
-            return target;
-        }
-
-        public void setSource(final int source) {
-            this.source = source;
-        }
-
-        public void setTarget(final int target) {
-            this.target = target;
-        }
+        @Getter
+        @Setter
+        int target;
     }
 }
